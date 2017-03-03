@@ -10,12 +10,12 @@
 #define F_CPU 16000000UL // 16 MHz clock speed
 #endif
 
-//#define BAUD 9600UL							// скорость передачи данных по UART
-//#define LINE_SIZE 16U						// длина строки дисплея 
-//#define DYSPLAY_SIZE 2U						// количество строк на экране 
-#define BUF_SIZE 128						// размер буфера передатчика
+//#define BAUD 9600UL							// Г±ГЄГ®Г°Г®Г±ГІГј ГЇГҐГ°ГҐГ¤Г Г·ГЁ Г¤Г Г­Г­Г»Гµ ГЇГ® UART
+//#define LINE_SIZE 16U						// Г¤Г«ГЁГ­Г  Г±ГІГ°Г®ГЄГЁ Г¤ГЁГ±ГЇГ«ГҐГї 
+//#define DYSPLAY_SIZE 2U						// ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г±ГІГ°Г®ГЄ Г­Г  ГЅГЄГ°Г Г­ГҐ 
+#define BUF_SIZE 128						// Г°Г Г§Г¬ГҐГ° ГЎГіГґГҐГ°Г  ГЇГҐГ°ГҐГ¤Г ГІГ·ГЁГЄГ 
 #define BUF_MASK (BUF_SIZE-1)
-#define IN_BUF_SIZE 64					// размер буфера приемника
+#define IN_BUF_SIZE 64					// Г°Г Г§Г¬ГҐГ° ГЎГіГґГҐГ°Г  ГЇГ°ГЁГҐГ¬Г­ГЁГЄГ 
 #define IN_BUF_MASK (IN_BUF_SIZE-1)
 
 #define CR 0x0D
@@ -23,11 +23,11 @@
 
 #define DELL _delay_ms (500)
 
-#define SEND (UCSR0B |= (1<<UDRIE0)) // разрешаем прерывание по опустошению регистра передатчика
+#define SEND (UCSR0B |= (1<<UDRIE0)) // Г°Г Г§Г°ГҐГёГ ГҐГ¬ ГЇГ°ГҐГ°Г»ГўГ Г­ГЁГҐ ГЇГ® Г®ГЇГіГ±ГІГ®ГёГҐГ­ГЁГѕ Г°ГҐГЈГЁГ±ГІГ°Г  ГЇГҐГ°ГҐГ¤Г ГІГ·ГЁГЄГ 
 #define RESEN (UCSR0B |= (1<<RXEN0)) // RX Enable
 
 
-#define NUM0 "\"+380667677998\"\r"
+#define NUM0 "\"+380xxxxxxxxx\"\r"
 #define REG_MESS "Hello. Button 1\r"
 #define STR_MESS "Device ready to work\r"
 
@@ -42,17 +42,17 @@
 #define RS eS_PORTB0
 #define EN eS_PORTB1
 
-// === объявление глобальных переменных и функций ===
+// === Г®ГЎГєГїГўГ«ГҐГ­ГЁГҐ ГЈГ«Г®ГЎГ Г«ГјГ­Г»Гµ ГЇГҐГ°ГҐГ¬ГҐГ­Г­Г»Гµ ГЁ ГґГіГ­ГЄГ¶ГЁГ© ===
 // ==================================================
-//#define BAUDRATE ((F_CPU)/(BAUD*16UL)-1)    // макрос расчета скорости передачи для UBRR
-//#define A_SIZE(a)  (sizeof(a)/sizeof(*(a)))	// макрос расчета числа элементов массива
+//#define BAUDRATE ((F_CPU)/(BAUD*16UL)-1)    // Г¬Г ГЄГ°Г®Г± Г°Г Г±Г·ГҐГІГ  Г±ГЄГ®Г°Г®Г±ГІГЁ ГЇГҐГ°ГҐГ¤Г Г·ГЁ Г¤Г«Гї UBRR
+//#define A_SIZE(a)  (sizeof(a)/sizeof(*(a)))	// Г¬Г ГЄГ°Г®Г± Г°Г Г±Г·ГҐГІГ  Г·ГЁГ±Г«Г  ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў Г¬Г Г±Г±ГЁГўГ 
 
 
 
 #include <util/delay.h>
 
-#include <avr/interrupt.h>					// подключаем библиотеку для работы с прерываниями
-#include <util/atomic.h>					// подключаем библиотеку для атомарных операций
+#include <avr/interrupt.h>					// ГЇГ®Г¤ГЄГ«ГѕГ·Г ГҐГ¬ ГЎГЁГЎГ«ГЁГ®ГІГҐГЄГі Г¤Г«Гї Г°Г ГЎГ®ГІГ» Г± ГЇГ°ГҐГ°Г»ГўГ Г­ГЁГїГ¬ГЁ
+#include <util/atomic.h>					// ГЇГ®Г¤ГЄГ«ГѕГ·Г ГҐГ¬ ГЎГЁГЎГ«ГЁГ®ГІГҐГЄГі Г¤Г«Гї Г ГІГ®Г¬Г Г°Г­Г»Гµ Г®ГЇГҐГ°Г Г¶ГЁГ©
 #include <string.h>
 #include "lcd.h"
 #include <avr/io.h>
@@ -66,11 +66,11 @@ volatile uint8_t ind_in=0, ind_out=0, rxind_out=0, rxind_in=0, mess = 0;
 
 #define TIMEOUT 100
 
-// инициализация UART
+// ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї UART
 void uartInit (void)
 {
-	//UBRR0H = (unsigned char)(baudrate>>8);	// сдвигаем число вправо на 8 бит
-	//UBRR0L = (unsigned char)baudrate;		// устанавливаем скорость передачи
+	//UBRR0H = (unsigned char)(baudrate>>8);	// Г±Г¤ГўГЁГЈГ ГҐГ¬ Г·ГЁГ±Г«Г® ГўГЇГ°Г ГўГ® Г­Г  8 ГЎГЁГІ
+	//UBRR0L = (unsigned char)baudrate;		// ГіГ±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГ¬ Г±ГЄГ®Г°Г®Г±ГІГј ГЇГҐГ°ГҐГ¤Г Г·ГЁ
 	
 	#define baudrate 9600L
 	#define bauddivider (F_CPU/(16*baudrate)-1)
@@ -80,9 +80,9 @@ void uartInit (void)
 	UBRR0L = LO(bauddivider);
 	UBRR0H = HI(bauddivider);
 	UCSR0A = 0;
-	UCSR0B|= (1<<RXCIE0)|(0<<TXCIE0);				// разрешаем прерывание по приему
-	UCSR0B|= (1<<TXEN0)|(1<<RXEN0);     // включаем приемник и передатчик
-	UCSR0C|= (0<<UPM00)|(3<<UCSZ00);    //  формат данных 8 бит
+	UCSR0B|= (1<<RXCIE0)|(0<<TXCIE0);				// Г°Г Г§Г°ГҐГёГ ГҐГ¬ ГЇГ°ГҐГ°Г»ГўГ Г­ГЁГҐ ГЇГ® ГЇГ°ГЁГҐГ¬Гі
+	UCSR0B|= (1<<TXEN0)|(1<<RXEN0);     // ГўГЄГ«ГѕГ·Г ГҐГ¬ ГЇГ°ГЁГҐГ¬Г­ГЁГЄ ГЁ ГЇГҐГ°ГҐГ¤Г ГІГ·ГЁГЄ
+	UCSR0C|= (0<<UPM00)|(3<<UCSZ00);    //  ГґГ®Г°Г¬Г ГІ Г¤Г Г­Г­Г»Гµ 8 ГЎГЁГІ
 	UCSR0A &= ~(1<< UDRE0);
 	sei ();
 }
@@ -93,8 +93,8 @@ void SendByte(char byte)
 		//while(!(UCSR0A & (1<<UDRE0))); //Stop interrupt for correct position
 		//UDR0 = byte;
 	ATOMIC_BLOCK(ATOMIC_FORCEON){
-	buffer[ind_in++] = byte; //инкремент «головы» 
-	ind_in &= BUF_MASK;  // зацикливание «головы» (организация кольца)
+	buffer[ind_in++] = byte; //ГЁГ­ГЄГ°ГҐГ¬ГҐГ­ГІ В«ГЈГ®Г«Г®ГўГ»В» 
+	ind_in &= BUF_MASK;  // Г§Г Г¶ГЁГЄГ«ГЁГўГ Г­ГЁГҐ В«ГЈГ®Г«Г®ГўГ»В» (Г®Г°ГЈГ Г­ГЁГ§Г Г¶ГЁГї ГЄГ®Г«ГјГ¶Г )
 	}
 }
 
@@ -287,9 +287,9 @@ int send_sms (int fun, char *number)
 //Sending data from buffer
 ISR (USART_UDRE_vect)
 {
-	UDR0 = buffer[ind_out++];   //запись из буфера
-	ind_out &= BUF_MASK;      //проверка маски кольцевого буфера
-	if (ind_in == ind_out)  //if last byte //если буфер уже пуст
+	UDR0 = buffer[ind_out++];   //Г§Г ГЇГЁГ±Гј ГЁГ§ ГЎГіГґГҐГ°Г 
+	ind_out &= BUF_MASK;      //ГЇГ°Г®ГўГҐГ°ГЄГ  Г¬Г Г±ГЄГЁ ГЄГ®Г«ГјГ¶ГҐГўГ®ГЈГ® ГЎГіГґГҐГ°Г 
+	if (ind_in == ind_out)  //if last byte //ГҐГ±Г«ГЁ ГЎГіГґГҐГ° ГіГ¦ГҐ ГЇГіГ±ГІ
 	{
 		UCSR0B &= ~(1<<UDRIE0); //disable interrupt UDR empty
 		RESEN;
@@ -325,7 +325,7 @@ ISR (USART_RX_vect)
 	sei ();
 }
 
-ISR(USART_TX_vect)      // вектор прерывания UART - завершение передачи
+ISR(USART_TX_vect)      // ГўГҐГЄГІГ®Г° ГЇГ°ГҐГ°Г»ГўГ Г­ГЁГї UART - Г§Г ГўГҐГ°ГёГҐГ­ГЁГҐ ГЇГҐГ°ГҐГ¤Г Г·ГЁ
 {
 	sei ();
 }
@@ -334,12 +334,12 @@ ISR(USART_TX_vect)      // вектор прерывания UART - завершение передачи
 int main(void)
 {
 	
-// === инициализация ===
+// === ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї ===
 // =====================
 
 				
 							
-// инициализация дисплея
+// ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї Г¤ГЁГ±ГЇГ«ГҐГї
 	
 	DDRD = 0xFF;
 	DDRB = 0xFF;
@@ -351,7 +351,7 @@ int main(void)
 	_delay_ms(2000);
 	Lcd4_Clear();
 	
-// инициализация UART
+// ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї UART
 	uartInit();
 	
 	
